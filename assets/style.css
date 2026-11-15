@@ -3,11 +3,13 @@
   --bg:#ffffff; --fg:#1a1a1a; --muted:#6b6b6b; --border:#e6e6e6;
   --accent:#c8442e; --card:#fafafa; --code-bg:#f4f4f4;
   --max:720px;
+  --hero-img:url(/assets/hero-bg.jpg);
 }
 @media (prefers-color-scheme:dark){
   :root{
     --bg:#121212; --fg:#e8e8e8; --muted:#9a9a9a; --border:#2a2a2a;
     --accent:#e0674e; --card:#1a1a1a; --code-bg:#1e1e1e;
+    --hero-img:url(/assets/hero-bg.jpg);
   }
 }
 *{box-sizing:border-box}
@@ -37,16 +39,17 @@ nav a.active{color:var(--fg); font-weight:600}
   position:relative;
   margin:0 -20px;
   padding:88px 20px 64px;
-  background-image:url(/assets/hero-bg.jpg);
+  background-image:var(--hero-img);
   background-size:cover;
   background-position:center 30%;
   background-repeat:no-repeat;
-  border-bottom:1px solid var(--border);
   overflow:hidden;
 }
 .hero::after{
   content:''; position:absolute; inset:0; pointer-events:none;
-  background:linear-gradient(180deg, rgba(5,9,18,.20) 0%, rgba(5,9,18,.55) 55%, rgba(5,9,18,.82) 100%);
+  background:
+    linear-gradient(to bottom, rgba(0,0,0,0) 55%, var(--bg) 100%),
+    linear-gradient(180deg, rgba(5,9,18,.18) 0%, rgba(5,9,18,.50) 55%, rgba(5,9,18,.78) 100%);
 }
 .hero > *{position:relative; z-index:1}
 .hero h1{color:#fff; text-shadow:0 2px 18px rgba(0,0,0,.75); margin:0}
