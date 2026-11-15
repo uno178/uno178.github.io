@@ -127,7 +127,7 @@ ${extra}
 <body>
 <header class="site"><div class="wrap">
   <a class="brand" href="/">${esc(SITE.title)}</a>
-  <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a><a href="/about.html">关于</a></nav>
+  <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a></nav>
 </div></header>
 <main class="wrap">${body}</main>
 <footer class="site"><div class="wrap">
@@ -156,6 +156,8 @@ function build(){
     <div class="hero">
       <img class="avatar" src="/assets/avatar.png" alt="">
       <h1>${esc(SITE.title)}</h1>
+    </div>
+    <div class="intro">
       <p class="lead">${esc(SITE.desc)}</p>
       <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
     </div>
@@ -173,17 +175,6 @@ function build(){
         ${p.html}
       </article>`));
   });
-
-  // 关于页
-  fs.writeFileSync(path.join(OUT,'about.html'), layout('关于', `
-    <article>
-      <a class="back" href="/">← 返回</a>
-      <h1>长门厶希</h1>
-      <p>互联网角落的某人。</p>
-      <hr><hr><hr>
-      <blockquote><p>对不幸的凡人来说，生命中最美好的日子最先飞逝；疾病、凄凉的老年和劳苦随之而来，严酷的死亡无情地把人攫走。</p></blockquote>
-      <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
-    </article>`));
 
   // RSS
   fs.writeFileSync(path.join(OUT,'feed.xml'), `<?xml version="1.0" encoding="UTF-8"?>
