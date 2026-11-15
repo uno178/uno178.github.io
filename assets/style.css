@@ -109,3 +109,7 @@ footer.site .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; g
   article h1{font-size:24px}
   nav a{margin-left:14px; font-size:14px}
 }
+
+/* 头像图片 */
+img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bottom:24px;
+  border-radius:50%; border:1px solid var(--border); background:var(--card)}
