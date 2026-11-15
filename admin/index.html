@@ -175,10 +175,13 @@ async function connect(){
 /* ---------- 列表 ---------- */
 async function loadList(){
   try{
-    const files=await api(`/repos/${OWNER}/${REPO}/contents/${DIR}?ref=${BRANCH}`);
+    let files=[];
+    try{ files=await api(`/repos/${OWNER}/${REPO}/contents/${DIR}?ref=${BRANCH}`); }
+    catch(e){ if(!/Not Found|404/i.test(e.message)) throw e; files=[]; }  // 空目录 = 没有文章
+    if(!Array.isArray(files)) files=[];
     posts=files.filter(f=>f.name.endsWith('.md')).sort((a,b)=>b.name<a.name?-1:1);
     const box=$('postList');
-    if(!posts.length){box.innerHTML='<p class="hint">还没有文章，点上面「写新文章」开始。</p>'}
+    if(!posts.length){box.innerHTML='<div style="text-align:center;padding:20px 0"><p class="hint" style="margin-bottom:14px">📭 还没有文章</p><button class="primary" onclick="openPost(null)">＋ 写第一篇</button></div>'}
     else{
       box.innerHTML=posts.map(p=>`<div class="list-item" data-f="${p.name}">
         <div><div class="t">${p.name.replace(/\.md$/,'')}</div><div class="d">${p.name}</div></div>
@@ -266,8 +269,14 @@ $('btnPreview').onclick=()=>{
 $('btnLogout').onclick=()=>{localStorage.removeItem('gh_token');token='';show('viewLogin')};
 
 /* ---------- 启动 ---------- */
-if(token){api('/user').then(loadList).catch(()=>{token='';show('viewLogin')})}
-else show('viewLogin');
+function fallbackCheck(){
+  const any=['viewLogin','viewList','viewEdit'].some(id=>!$(id).classList.contains('hidden'));
+  if(!any) show('viewLogin');
+}
+if(token){
+  api('/user').then(()=>loadList()).catch(()=>{localStorage.removeItem('gh_token');token='';show('viewLogin')});
+  setTimeout(fallbackCheck,3000);
+}else show('viewLogin');
 </script>
 </body>
 </html>
