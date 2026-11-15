@@ -14,14 +14,13 @@ const OUT = path.join(ROOT, 'site');
 
 /* ---------------- 站点配置（改这里） ---------------- */
 const SITE = {
-  title: '我的博客',
-  author: '你的名字',
-  desc: '写点想写的东西。',
-  url: 'https://example.com',
+  title: '长门厶希 的 幻想',
+  author: '长门厶希',
+  desc: 'ただの人間には興味ありません。この中に宇宙人、未来人、異世界人、超能力者がいたら、あたしのところに来なさい。以上。',
+  url: 'https://uno178.github.io',
   links: [
-    ['GitHub', 'https://github.com/'],
-    ['B站', 'https://space.bilibili.com/'],
-    ['邮箱', 'mailto:you@example.com'],
+    ['B站', 'https://space.bilibili.com/3546910166092247'],
+    ['邮箱', 'mailto:3919212116@qq.com'],
   ],
 };
 
@@ -155,7 +154,7 @@ function build(){
   // 首页 = 文章列表
   fs.writeFileSync(path.join(OUT,'index.html'), layout(SITE.title, `
     <div class="hero">
-      <div class="avatar">✎</div>
+      <img class="avatar" src="/assets/avatar.png" alt="">
       <h1>${esc(SITE.title)}</h1>
       <p class="lead">${esc(SITE.desc)}</p>
       <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
@@ -179,9 +178,10 @@ function build(){
   fs.writeFileSync(path.join(OUT,'about.html'), layout('关于', `
     <article>
       <a class="back" href="/">← 返回</a>
-      <h1>关于我</h1>
-      <p>把这里换成你想说的话。</p>
-      <p>喜欢的东西、在做的事、想认识的人——随便写。</p>
+      <h1>长门厶希</h1>
+      <p>互联网角落的某人。</p>
+      <hr><hr><hr>
+      <blockquote><p>对不幸的凡人来说，生命中最美好的日子最先飞逝；疾病、凄凉的老年和劳苦随之而来，严酷的死亡无情地把人攫走。</p></blockquote>
       <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
     </article>`));
 
