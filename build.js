@@ -15,6 +15,7 @@ const OUT = path.join(ROOT, 'site');
 /* ---------------- 站点配置（改这里） ---------------- */
 const SITE = {
   title: '长门厶希 的 幻想',
+  brand: '𝑵𝒂𝒈𝒂𝒕𝒐 𝑺𝒉𝒊𝒌𝒊’𝒔 𝑭𝒂𝒏𝒕𝒂𝒔𝒚',  // 页头左上角显示
   author: '长门厶希',
   desc: 'ただの人間には興味ありません。この中に宇宙人、未来人、異世界人、超能力者がいたら、あたしのところに来なさい。以上。',
   url: 'https://uno178.github.io',
@@ -132,7 +133,7 @@ ${extra}
 </head>
 <body>
 <header class="site"><div class="wrap">
-  <a class="brand" href="/">${esc(SITE.title)}</a>
+  <a class="brand" href="/">${esc(SITE.brand || SITE.title)}</a>
   <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a></nav>
 </div></header>
 <main class="wrap">${body}</main>
