@@ -50,8 +50,12 @@ function md(src){
   let i = 0, inList = false, inOl = false;
 
   const closeList = () => { if(inList){out.push('</ul>');inList=false} if(inOl){out.push('</ol>');inOl=false} };
-  const inline = t => t
-    .replace(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g, '<img src="$2" alt="$1">')
+  // 先把原文的 HTML 特殊字符转义，再套 Markdown 语法
+  // —— 这样文章里写 <script> 只会显示成文字，不会被执行
+  const inline = raw => String(raw)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+    .replace(/!\[([^\]]*)\]\(([^)\s]+)[^)]*\)/g, '<img src="$2" alt="$1" loading="lazy">')
     .replace(/\[([^\]]+)\]\(([^)\s]+)[^)]*\)/g, '<a href="$2">$1</a>')
     .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
     .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, '<em>$1</em>')
@@ -128,6 +132,8 @@ const layout = (title, body, extra='') => `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(SITE.desc)}">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="stylesheet" href="/assets/style.css?v=${assetVer('assets/style.css')}">
 ${extra}
 </head>
