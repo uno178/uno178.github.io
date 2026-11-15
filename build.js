@@ -27,6 +27,12 @@ const SITE = {
 /* ---------------- 工具 ---------------- */
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const pad = n => String(n).padStart(2,'0');
+// 静态资源版本号：内容变了 URL 就变，浏览器缓存自动失效
+const crypto = require('crypto');
+const assetVer = rel => {
+  try { return crypto.createHash('md5').update(fs.readFileSync(path.join(ROOT, rel))).digest('hex').slice(0, 8); }
+  catch { return '0'; }
+};
 function fmtDate(d){ const t=new Date(d); return `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`; }
 
 /* ---------------- 极简 Markdown ---------------- */
@@ -121,7 +127,7 @@ const layout = (title, body, extra='') => `<!DOCTYPE html>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(SITE.desc)}">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=${assetVer('assets/style.css')}">
 ${extra}
 </head>
 <body>
@@ -154,7 +160,7 @@ function build(){
   // 首页 = 文章列表
   fs.writeFileSync(path.join(OUT,'index.html'), layout(SITE.title, `
     <div class="hero">
-      <img class="avatar" src="/assets/avatar.png" alt="">
+      <img class="avatar" src="/assets/avatar.png?v=${assetVer('assets/avatar.png')}" alt="">
       <h1>${esc(SITE.title)}</h1>
     </div>
     <div class="intro">
