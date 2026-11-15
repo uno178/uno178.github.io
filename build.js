@@ -149,6 +149,8 @@ function build(){
   fs.rmSync(OUT,{recursive:true,force:true});
   fs.mkdirSync(path.join(OUT,'blog'),{recursive:true});
   fs.cpSync(path.join(ROOT,'assets'), path.join(OUT,'assets'), {recursive:true});
+  // 写作后台也一起发布（页面本身公开，但要 Token 才能写）
+  if(fs.existsSync(path.join(ROOT,'admin'))) fs.cpSync(path.join(ROOT,'admin'), path.join(OUT,'admin'), {recursive:true});
 
   // 首页 = 文章列表
   fs.writeFileSync(path.join(OUT,'index.html'), layout(SITE.title, `
