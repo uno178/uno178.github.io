@@ -203,6 +203,22 @@
   }
   $('btnTitle').onclick = backToTitle
 
+  /* ===== 离开页面时必定停音频 ===== */
+  function stopAudio() {
+    if (bgmEl) { try { bgmEl.pause(); bgmEl.currentTime = 0 } catch (e) {} }
+    bgmEl = null; curBgm = ''
+  }
+  addEventListener('pagehide', stopAudio)
+  addEventListener('beforeunload', stopAudio)
+  // bfcache 恢复（前进/后退回来）时也确保是静音状态
+  addEventListener('pageshow', ev => { if (ev.persisted) stopAudio() })
+  // 切到后台自动暂停，回来继续
+  document.addEventListener('visibilitychange', () => {
+    if (!bgmEl) return
+    if (document.hidden) { try { bgmEl.pause() } catch (e) {} }
+    else if (started && curBgm) { bgmEl.play().catch(() => {}) }
+  })
+
   /* ===== 雪 ===== */
   ;(function snow() {
     const box = $('snow')
