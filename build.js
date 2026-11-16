@@ -140,7 +140,7 @@ ${extra}
 <body>
 <header class="site"><div class="wrap">
   <a class="brand" href="/">${esc(SITE.brand || SITE.title)}</a>
-  <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a></nav>
+  <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a><a href="/game/">游戏</a></nav>
 </div></header>
 <main class="wrap">${body}</main>
 <footer class="site"><div class="wrap">
@@ -161,6 +161,8 @@ function build(){
   fs.rmSync(OUT,{recursive:true,force:true});
   fs.mkdirSync(path.join(OUT,'blog'),{recursive:true});
   fs.cpSync(path.join(ROOT,'assets'), path.join(OUT,'assets'), {recursive:true});
+  // 视觉小说
+  if (fs.existsSync(path.join(ROOT, 'game'))) fs.cpSync(path.join(ROOT, 'game'), path.join(OUT, 'game'), { recursive: true });
   // 写作后台也一起发布（页面本身公开，但要 Token 才能写）
   if(fs.existsSync(path.join(ROOT,'admin'))) fs.cpSync(path.join(ROOT,'admin'), path.join(OUT,'admin'), {recursive:true});
 
@@ -174,6 +176,16 @@ function build(){
       <p class="lead">${esc(SITE.desc)}</p>
       <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
     </div>
+    <section><h2>作品</h2>
+      <div class="grid">
+        <a class="card gamecard" href="/game/">
+          <div class="cover"><img src="/game/assets/bg/图片1.webp" alt="2000年冬"></div>
+          <h3>2000年冬</h3>
+          <p>千禧年的第一天，大雪，和一个陌生女孩在街角的对话。</p>
+          <span class="tag">视觉小说 · 横屏游玩</span>
+        </a>
+      </div>
+    </section>
     <section><h2>全部文章 · ${posts.length} 篇</h2>
       ${posts.map(item).join('\n') || '<p style="color:var(--muted)">还没有文章，去 posts/ 里新建一个 .md 吧。</p>'}
     </section>`));
