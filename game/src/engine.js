@@ -12,7 +12,6 @@
   let typing = false, typeTimer = null, fullText = ''
   let bgToggle = false, curBg = '', curChar = '', curBgm = ''
   let bgmEl = null, started = false
-  let bgmSeq = 0
 
   /* ===== 音量 ===== */
   let volume = Number(localStorage.getItem('vn_vol') ?? 70)
@@ -87,30 +86,71 @@
     charBox.classList.add('on')
   }
 
-  /* ===== BGM ===== */
-  function playBgm(path) {
-    if (!path) { if (bgmEl) { try { bgmEl.pause() } catch {} bgmEl = null } curBgm = ''; return }
-    if (curBgm === path && bgmEl) { bgmEl.play().catch(() => {}); return }
-    curBgm = path
-    if (bgmEl) { try { bgmEl.pause() } catch {} }
-    const seq = ++bgmSeq
+  /* ===== BGM：预加载 + 交叉淡入（切换不中断） ===== */
+  const bgmCache = {}
+  let bgmSeq = 0
+
+  function makeAudio(path) {
     const a = new Audio('assets/' + path)
-    a.loop = true; a.volume = 0; a.preload = 'auto'
-    const start = () => {
-      if (seq !== bgmSeq) return            // 已经切到别的曲子了
-      a.play().catch(() => {})
-      fadeTo(a, volume / 100, 1200)
-    }
-    if (a.readyState >= 2) start()
-    else a.addEventListener('canplay', start, { once: true })
-    bgmEl = a
+    a.loop = true
+    a.preload = 'auto'
+    a.volume = 0
+    bgmCache[path] = a
+    return a
   }
+
+  function preloadBgm(firstOnly) {
+    const seen = firstOnly ? [data.lines.find(l => l.type === 'bgm')].filter(Boolean) : data.lines
+    for (const l of seen) {
+      if (l.type !== 'bgm') continue
+      const p = data.bgmMap[l.name]
+      if (p && !bgmCache[p]) makeAudio(p)
+    }
+  }
+
+  function playBgm(path) {
+    if (!path) { if (bgmEl) { fadeOutStop(bgmEl, 700); bgmEl = null } curBgm = ''; return }
+    if (curBgm === path && bgmEl) { if (bgmEl.paused) bgmEl.play().catch(() => {}); return }
+
+    const seq = ++bgmSeq
+    curBgm = path
+    const old = bgmEl
+    const a = bgmCache[path] || makeAudio(path)
+
+    let fired = false
+    const start = () => {
+      if (fired) return
+      fired = true
+      if (seq !== bgmSeq) { try { a.pause() } catch (e2) {} return }
+      try { a.currentTime = 0 } catch (e2) {}
+      a.volume = 0
+      a.play().catch(() => {})
+      fadeTo(a, volume / 100, 900)
+      if (old && old !== a) fadeOutStop(old, 900)   // 旧曲同时淡出 → 无缝交叉
+      bgmEl = a
+    }
+
+    if (a.readyState >= 3) start()
+    else a.addEventListener('canplay', start, { once: true })
+    // 加载失败就保持旧曲继续播，绝不出现空白
+  }
+
   function fadeTo(a, target, ms) {
     const from = a.volume, t0 = performance.now()
     const step = t => {
       const k = Math.min(1, (t - t0) / ms)
       a.volume = Math.max(0, Math.min(1, from + (target - from) * k))
       if (k < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+  function fadeOutStop(a, ms) {
+    const from = a.volume, t0 = performance.now()
+    const step = t => {
+      const k = Math.min(1, (t - t0) / (ms || 700))
+      a.volume = from * (1 - k)
+      if (k < 1) requestAnimationFrame(step)
+      else { try { a.pause() } catch (e2) {} }
     }
     requestAnimationFrame(step)
   }
@@ -231,6 +271,7 @@
 
   /* ===== 离开页面时必定停音频 ===== */
   function stopAudio() {
+    for (const p in bgmCache) { try { bgmCache[p].pause(); bgmCache[p].currentTime = 0 } catch (e) {} }
     if (bgmEl) { try { bgmEl.pause(); bgmEl.currentTime = 0 } catch (e) {} }
     bgmEl = null; curBgm = ''
   }
@@ -270,5 +311,7 @@
     titleScreen.style.backgroundImage = `url("assets/bg/图片1.webp")`
     // 预加载所有背景（一共不到 500KB，一次性载入）
     preloadBg()
+    preloadBgm(true)                       // 先把第一首准备好
+    setTimeout(() => preloadBgm(false), 5000)  // 其余几首慢慢下
   })
 })()
