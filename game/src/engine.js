@@ -12,6 +12,7 @@
   let typing = false, typeTimer = null, fullText = ''
   let bgToggle = false, curBg = '', curChar = '', curBgm = ''
   let bgmEl = null, started = false
+  let bgmSeq = 0
 
   /* ===== 音量 ===== */
   let volume = Number(localStorage.getItem('vn_vol') ?? 70)
@@ -31,30 +32,50 @@
     frame.style.width = Math.round(fw) + 'px'
     frame.style.height = Math.round(fh) + 'px'
   }
+  /* 背景：预加载 + 序号保证顺序（防止快速点击时图片错乱） */
+  const bgImg = {}
+  let bgSeq = 0
+
+  function preloadBg() {
+    for (const l of data.lines) {
+      if (l.type !== 'bg' || bgImg[l.name]) continue
+      const im = new Image()
+      im.src = `assets/bg/${l.name}.webp`
+      bgImg[l.name] = im
+    }
+  }
+
   function setBg(name, slow) {
     if (curBg === name) return
     curBg = name
+    const seq = ++bgSeq
     const dur = slow ? 4200 : 900
     const url = `assets/bg/${name}.webp`
-    const img = new Image()
-    img.onload = () => {
-      fitFrame(img.naturalWidth, img.naturalHeight)
+
+    const apply = (im) => {
+      if (seq !== bgSeq) return                 // 已经有更新的切换，丢弃这次
+      if (im && im.naturalWidth) fitFrame(im.naturalWidth, im.naturalHeight)
       const showEl = bgToggle ? bgA : bgB
       const hideEl = bgToggle ? bgB : bgA
       bgToggle = !bgToggle
       showEl.style.transitionDuration = dur + 'ms'
       hideEl.style.transitionDuration = dur + 'ms'
       showEl.style.backgroundImage = `url("${url}")`
+      void showEl.offsetWidth                   // 强制回流，确保过渡生效
       showEl.classList.add('on')
       hideEl.classList.remove('on')
     }
-    img.src = url
+
+    let im = bgImg[name]
+    if (!im) { im = new Image(); bgImg[name] = im; im.src = url }
+    if (im.complete && im.naturalWidth) { apply(im); return }   // 已缓存，立即切换
+    im.addEventListener('load', () => apply(im), { once: true })
+    im.addEventListener('error', () => { if (seq === bgSeq) apply(null) }, { once: true })
   }
+
   addEventListener('resize', () => {
-    if (!curBg) return
-    const img = new Image()
-    img.onload = () => fitFrame(img.naturalWidth, img.naturalHeight)
-    img.src = `assets/bg/${curBg}.webp`
+    const im = curBg && bgImg[curBg]
+    if (im && im.naturalWidth) fitFrame(im.naturalWidth, im.naturalHeight)
   })
 
   /* ===== 立绘（半身）===== */
@@ -72,9 +93,14 @@
     if (curBgm === path && bgmEl) { bgmEl.play().catch(() => {}); return }
     curBgm = path
     if (bgmEl) { try { bgmEl.pause() } catch {} }
+    const seq = ++bgmSeq
     const a = new Audio('assets/' + path)
     a.loop = true; a.volume = 0; a.preload = 'auto'
-    const start = () => { a.play().catch(() => {}); fadeTo(a, volume / 100, 1200) }
+    const start = () => {
+      if (seq !== bgmSeq) return            // 已经切到别的曲子了
+      a.play().catch(() => {})
+      fadeTo(a, volume / 100, 1200)
+    }
     if (a.readyState >= 2) start()
     else a.addEventListener('canplay', start, { once: true })
     bgmEl = a
@@ -242,5 +268,7 @@
     $('topTitle').textContent = d.title
     // 标题页背景 = 图片1
     titleScreen.style.backgroundImage = `url("assets/bg/图片1.webp")`
+    // 预加载所有背景（一共不到 500KB，一次性载入）
+    preloadBg()
   })
 })()
