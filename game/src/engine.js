@@ -95,6 +95,7 @@
     a.loop = true
     a.preload = 'auto'
     a.volume = 0
+    try { a.load() } catch (e2) {}
     bgmCache[path] = a
     return a
   }
@@ -110,7 +111,7 @@
 
   function playBgm(path) {
     if (!path) { if (bgmEl) { fadeOutStop(bgmEl, 700); bgmEl = null } curBgm = ''; return }
-    if (curBgm === path && bgmEl) { if (bgmEl.paused) bgmEl.play().catch(() => {}); return }
+    if (curBgm === path) { if (bgmEl && bgmEl.paused) bgmEl.play().catch(() => {}); return }
 
     const seq = ++bgmSeq
     curBgm = path
@@ -121,7 +122,7 @@
     const start = () => {
       if (fired) return
       fired = true
-      if (seq !== bgmSeq) { try { a.pause() } catch (e2) {} return }
+      if (seq !== bgmSeq) return          // 已有更新的请求，直接丢弃（不要 pause，会误伤同一个 Audio）
       try { a.currentTime = 0 } catch (e2) {}
       a.volume = 0
       a.play().catch(() => {})
@@ -301,6 +302,27 @@
       box.append(f)
     }
   })()
+
+  /* ===== 调试面板（只有 ?debug=1 才显示） ===== */
+  const DBG = new URLSearchParams(location.search).has('debug')
+  if (DBG) {
+    const d = document.createElement('div')
+    d.id = '__DBG__'
+    d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:9999;background:rgba(0,0,0,.8);color:#0f0;font:11px/1.5 monospace;padding:6px 8px;white-space:pre;pointer-events:none'
+    document.body.appendChild(d)
+    setInterval(() => {
+      const a = bgmEl
+      d.textContent = [
+        'bgm: ' + (curBgm || '-'),
+        'el: ' + (a ? 'yes' : 'no'),
+        'readyState: ' + (a ? a.readyState : '-'),
+        'paused: ' + (a ? a.paused : '-'),
+        't: ' + (a ? a.currentTime.toFixed(1) : '-'),
+        'vol: ' + (a ? a.volume.toFixed(2) : '-'),
+        'started: ' + started,
+      ].join('\n')
+    }, 400)
+  }
 
   /* ===== 启动 ===== */
   fetch('script.json').then(r => r.json()).then(d => {
