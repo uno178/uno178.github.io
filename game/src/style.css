@@ -19,6 +19,7 @@ body{
   background:#000;overflow:hidden;
   border:1px solid var(--edge);
   box-shadow:0 0 80px rgba(0,0,0,.95), inset 0 0 0 1px rgba(0,0,0,.5);
+  transition: width .45s ease, height .45s ease;
   z-index:1;
 }
 #frame .bg{
