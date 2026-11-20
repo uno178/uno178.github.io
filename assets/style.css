@@ -158,7 +158,7 @@ img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bott
 
 /* 卡片：整张就是封面，标题压在左下角 */
 .games{display:flex;flex-wrap:wrap;gap:16px;padding:24px 0 56px;justify-content:center}
-.gcard{position:relative;display:block;width:220px;aspect-ratio:16/9;flex:0 0 auto;
+.gcard{position:relative;display:block;width:100%;max-width:360px;aspect-ratio:16/9;flex:0 0 auto;
   border:1px solid var(--border);border-radius:3px;overflow:hidden;
   background:#000;color:#fff;transition:.2s}
 .gcard:hover{border-color:var(--accent);text-decoration:none}
