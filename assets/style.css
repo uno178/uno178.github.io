@@ -156,11 +156,11 @@ img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bott
 .hero-games .hero-sub{color:var(--hero-text);opacity:.8;font-size:14px;
   letter-spacing:.14em;margin:14px 0 0;text-shadow:var(--hero-shadow)}
 .games{display:flex;flex-wrap:wrap;gap:16px;padding:24px 0 56px}
-.gcard{width:200px;flex:0 0 auto}
-.gcard{display:block;border:1px solid var(--border);border-radius:12px;overflow:hidden;
+.gcard{width:168px;flex:0 0 auto}
+.gcard{display:block;border:1px solid var(--border);border-radius:6px;overflow:hidden;
   background:var(--card);color:var(--fg);transition:.2s}
 .gcard:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
-.gcover{aspect-ratio:16/9;overflow:hidden;background:#000}
+.gcover{aspect-ratio:4/3;overflow:hidden;background:#000}
 .gcover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
 .gcard:hover .gcover img{transform:scale(1.04)}
 .gbody{padding:14px 15px 16px}
