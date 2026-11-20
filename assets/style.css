@@ -172,3 +172,13 @@ img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bott
   text-shadow:0 1px 8px rgba(0,0,0,.95);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== 强制白天模式（游戏页） ===== */
+body.is-light{
+  --bg:#ffffff; --fg:#1a1a1a; --muted:#6b6b6b; --border:#e6e6e6;
+  --accent:#1b3a6b; --card:#fafafa; --code-bg:#f4f4f4;
+  --hero-img:url(/assets/hero-bg-light.jpg);
+  --hero-text:#16202e;
+  --hero-shadow:0 1px 10px rgba(255,255,255,.9);
+  --hero-scrim:linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.30) 55%, rgba(255,255,255,.62) 100%);
+}
