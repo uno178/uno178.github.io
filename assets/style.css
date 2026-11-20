@@ -155,15 +155,19 @@ img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bott
 .hero-games h1{font-size:40px;letter-spacing:.04em}
 .hero-games .hero-sub{color:var(--hero-text);opacity:.8;font-size:14px;
   letter-spacing:.14em;margin:14px 0 0;text-shadow:var(--hero-shadow)}
-.games{display:flex;flex-wrap:wrap;gap:16px;padding:24px 0 56px}
-.gcard{width:168px;flex:0 0 auto}
-.gcard{display:block;border:1px solid var(--border);border-radius:6px;overflow:hidden;
+
+/* 横版卡片：左边封面，右边文字 */
+.games{display:flex;flex-wrap:wrap;gap:14px;padding:24px 0 56px}
+.gcard{display:flex;width:238px;height:94px;flex:0 0 auto;
+  border:1px solid var(--border);border-radius:3px;overflow:hidden;
   background:var(--card);color:var(--fg);transition:.2s}
 .gcard:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
-.gcover{aspect-ratio:4/3;overflow:hidden;background:#000}
+.gcover{flex:0 0 46%;overflow:hidden;background:#000}
 .gcover img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
-.gcard:hover .gcover img{transform:scale(1.04)}
-.gbody{padding:14px 15px 16px}
-.gbody h3{margin:0 0 6px;font-size:15px;font-weight:650}
-.gbody p{margin:0 0 10px;font-size:13px;color:var(--muted);line-height:1.6}
-.gtag{font-size:11px;color:var(--accent);letter-spacing:.05em}
+.gcard:hover .gcover img{transform:scale(1.05)}
+.gbody{flex:1;min-width:0;padding:10px 11px;display:flex;flex-direction:column;justify-content:center}
+.gbody h3{margin:0 0 4px;font-size:14px;font-weight:650;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gbody p{margin:0 0 6px;font-size:11px;color:var(--muted);line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gtag{font-size:10px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
