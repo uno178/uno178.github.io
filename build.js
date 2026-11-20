@@ -172,11 +172,7 @@ function gameListPage() {
   const cards = GAMES.map(g =>
     '<a class="gcard" href="/game/' + g.slug + '/">' +
       '<div class="gcover"><img src="' + g.cover + '" alt="' + esc(g.title) + '" loading="lazy"></div>' +
-      '<div class="gbody">' +
-        '<h3>' + esc(g.title) + '</h3>' +
-        '<p>' + esc(g.desc) + '</p>' +
-        '<span class="gtag">' + esc(g.tag) + '</span>' +
-      '</div>' +
+      '<h3 class="gtitle">' + esc(g.title) + '</h3>' +
     '</a>').join('\n')
   return layout('游戏', `
     <div class="hero hero-games">
