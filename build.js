@@ -31,7 +31,7 @@ const GAMES = [
   {
     slug: '2000',
     title: '2000年冬',
-    desc: '2000年初，我遇到的那位不不存在少女。',
+    desc: '2000年初，我遇到的那位并不存在少女。',
     cover: '/game/2000/assets/bg/图片1.webp',
     tag: '视觉小说 · 横屏游玩',
   },
@@ -179,9 +179,9 @@ function gameListPage() {
       '</div>' +
     '</a>').join('\n')
   return layout('游戏', `
-    <div class="page-head">
+    <div class="hero hero-games">
       <h1>游戏</h1>
-      <p>${GAMES.length} 个作品</p>
+      <p class="hero-sub">${GAMES.length} 个作品</p>
     </div>
     <div class="games">${cards || '<p style="color:var(--muted)">还没有游戏。</p>'}</div>`)
 }
