@@ -32,7 +32,7 @@ const GAMES = [
     slug: '2000',
     title: '2000年冬',
     desc: '2000年初，我遇到的那位并不存在少女。',
-    cover: '/game/2000/assets/bg/图片1.webp',
+    cover: '/game/2000/assets/bg/图片2.webp',
     tag: '视觉小说 · 横屏游玩',
   },
 ]
@@ -137,7 +137,7 @@ function readPosts(){
 }
 
 /* ---------------- 模板 ---------------- */
-const layout = (title, body, extra='') => `<!DOCTYPE html>
+const layout = (title, body, extra='', bodyClass='') => `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -149,7 +149,7 @@ const layout = (title, body, extra='') => `<!DOCTYPE html>
 <link rel="stylesheet" href="/assets/style.css?v=${assetVer('assets/style.css')}">
 ${extra}
 </head>
-<body>
+<body${bodyClass ? ' class="' + bodyClass + '"' : ''}>
 <header class="site"><div class="wrap">
   <a class="brand" href="/">${esc(SITE.brand || SITE.title)}</a>
   <nav><a href="/" class="${title===SITE.title?'active':''}">文章</a><a href="/game/">游戏</a></nav>
@@ -179,7 +179,7 @@ function gameListPage() {
       <h1>游戏</h1>
       <p class="hero-sub">${GAMES.length} 个作品</p>
     </div>
-    <div class="games">${cards || '<p style="color:var(--muted)">还没有游戏。</p>'}</div>`)
+    <div class="games">${cards || '<p style="color:var(--muted)">还没有游戏。</p>'}</div>`, '', 'is-light')
 }
 
 /* ---------------- 生成 ---------------- */
