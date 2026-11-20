@@ -25,6 +25,18 @@ const SITE = {
   ],
 };
 
+/* ---------------- 游戏清单 ---------------- */
+// 以后加游戏：在这里加一项，并把构建产物放进 game/<slug>/
+const GAMES = [
+  {
+    slug: '2000',
+    title: '2000年冬',
+    desc: '2000年初，我遇到的那位不不存在少女。',
+    cover: '/game/2000/assets/bg/图片1.webp',
+    tag: '视觉小说 · 横屏游玩',
+  },
+]
+
 /* ---------------- 工具 ---------------- */
 const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 const pad = n => String(n).padStart(2,'0');
@@ -155,14 +167,36 @@ const item = p => `<a class="post-item" href="/blog/${p.slug}.html">
   <p class="excerpt">${esc(p.excerpt)}</p>
 </a>`;
 
+/* ---------------- 游戏列表页 ---------------- */
+function gameListPage() {
+  const cards = GAMES.map(g =>
+    '<a class="gcard" href="/game/' + g.slug + '/">' +
+      '<div class="gcover"><img src="' + g.cover + '" alt="' + esc(g.title) + '" loading="lazy"></div>' +
+      '<div class="gbody">' +
+        '<h3>' + esc(g.title) + '</h3>' +
+        '<p>' + esc(g.desc) + '</p>' +
+        '<span class="gtag">' + esc(g.tag) + '</span>' +
+      '</div>' +
+    '</a>').join('\n')
+  return layout('游戏', `
+    <div class="page-head">
+      <h1>游戏</h1>
+      <p>${GAMES.length} 个作品</p>
+    </div>
+    <div class="games">${cards || '<p style="color:var(--muted)">还没有游戏。</p>'}</div>`)
+}
+
 /* ---------------- 生成 ---------------- */
 function build(){
   const posts = readPosts();
   fs.rmSync(OUT,{recursive:true,force:true});
   fs.mkdirSync(path.join(OUT,'blog'),{recursive:true});
   fs.cpSync(path.join(ROOT,'assets'), path.join(OUT,'assets'), {recursive:true});
-  // 视觉小说
-  if (fs.existsSync(path.join(ROOT, 'game'))) fs.cpSync(path.join(ROOT, 'game'), path.join(OUT, 'game'), { recursive: true });
+  // 游戏（game/<slug>/）+ 游戏列表页
+  if (fs.existsSync(path.join(ROOT, 'game'))) {
+    fs.cpSync(path.join(ROOT, 'game'), path.join(OUT, 'game'), { recursive: true })
+    fs.writeFileSync(path.join(OUT, 'game', 'index.html'), gameListPage())
+  }
   // 写作后台也一起发布（页面本身公开，但要 Token 才能写）
   if(fs.existsSync(path.join(ROOT,'admin'))) fs.cpSync(path.join(ROOT,'admin'), path.join(OUT,'admin'), {recursive:true});
 
@@ -176,16 +210,6 @@ function build(){
       <p class="lead">${esc(SITE.desc)}</p>
       <div class="links">${SITE.links.map(([n,u])=>`<a href="${u}">${esc(n)}</a>`).join('')}</div>
     </div>
-    <section><h2>作品</h2>
-      <div class="grid">
-        <a class="card gamecard" href="/game/">
-          <div class="cover"><img src="/game/assets/bg/图片1.webp" alt="2000年冬"></div>
-          <h3>2000年冬</h3>
-          <p>千禧年的第一天，大雪，和一个陌生女孩在街角的对话。</p>
-          <span class="tag">视觉小说 · 横屏游玩</span>
-        </a>
-      </div>
-    </section>
     <section><h2>全部文章 · ${posts.length} 篇</h2>
       ${posts.map(item).join('\n') || '<p style="color:var(--muted)">还没有文章，去 posts/ 里新建一个 .md 吧。</p>'}
     </section>`));
