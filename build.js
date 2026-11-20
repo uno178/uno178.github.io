@@ -173,6 +173,7 @@ function gameListPage() {
     '<a class="gcard" href="/game/' + g.slug + '/">' +
       '<div class="gcover"><img src="' + g.cover + '" alt="' + esc(g.title) + '" loading="lazy"></div>' +
       '<h3 class="gtitle">' + esc(g.title) + '</h3>' +
+      '<p class="gmeta">' + esc(g.tag) + '</p>' +
     '</a>').join('\n')
   return layout('游戏', `
     <div class="hero hero-games">
