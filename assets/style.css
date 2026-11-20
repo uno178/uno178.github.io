@@ -155,7 +155,8 @@ img.avatar{display:block; width:88px; height:88px; object-fit:cover; margin-bott
 .hero-games h1{font-size:40px;letter-spacing:.04em}
 .hero-games .hero-sub{color:var(--hero-text);opacity:.8;font-size:14px;
   letter-spacing:.14em;margin:14px 0 0;text-shadow:var(--hero-shadow)}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;padding:24px 0 56px}
+.games{display:flex;flex-wrap:wrap;gap:16px;padding:24px 0 56px}
+.gcard{width:200px;flex:0 0 auto}
 .gcard{display:block;border:1px solid var(--border);border-radius:12px;overflow:hidden;
   background:var(--card);color:var(--fg);transition:.2s}
 .gcard:hover{border-color:var(--accent);transform:translateY(-2px);text-decoration:none}
